@@ -105,6 +105,18 @@ const CreateNew = (props) => {
   const authorField = useField("author");
   const infoField = useField("info");
 
+  // Destructure reset functions and input attributes
+  const { reset: resetContent, ...contentFieldInputAttributes } = contentField;
+  const { reset: resetAuthor, ...authorFieldInputAttributes } = authorField;
+  const { reset: resetInfo, ...infoFieldInputAttributes } = infoField;
+
+  // Custom hook for managing form reset
+  const handleReset = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
@@ -125,38 +137,28 @@ const CreateNew = (props) => {
           Content:
           <input
             style={{ margin: "0 5px 5px 5px" }}
-            name="content"
-            value={contentField.value}
-            onChange={contentField.onChange}
+            {...contentFieldInputAttributes}
           />
         </div>
         <div>
           Author:
           <input
             style={{ margin: "0 5px 5px 5px" }}
-            name="author"
-            value={authorField.value}
-            onChange={authorField.onChange}
+            {...authorFieldInputAttributes}
           />
         </div>
         <div>
           URL for more info:
           <input
             style={{ margin: "0 5px 5px 5px" }}
-            name="info"
-            value={infoField.value}
-            onChange={infoField.onChange}
+            {...infoFieldInputAttributes}
           />
         </div>
         <button style={{ padding: "5px 10px 5px 10px" }}>Create</button>
         <button
           style={{ margin: "0 5px 5px 5px", padding: "5px 10px 5px 10px" }}
           type="button"
-          onClick={() => {
-            contentField.reset();
-            authorField.reset();
-            infoField.reset();
-          }}
+          onClick={handleReset}
         >
           Reset
         </button>
