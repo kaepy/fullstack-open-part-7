@@ -1,14 +1,7 @@
 import { useState } from "react";
-import {
-  Routes,
-  Route,
-  Link,
-  Navigate,
-  useParams,
-  useNavigate,
-  useMatch,
-} from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
 
+// App navigation menu
 const Menu = () => {
   const button = {
     padding: 5,
@@ -20,6 +13,7 @@ const Menu = () => {
     backgroundColor: "#fff6c3cb",
     textDecoration: "none",
   };
+
   return (
     <div style={{ marginBottom: "20px" }}>
       <Link style={button} to="/">
@@ -35,6 +29,23 @@ const Menu = () => {
   );
 };
 
+// Display notification messages
+const Notification = ({ message }) => {
+  const style = {
+    border: "2px solid green",
+    borderRadius: "4px",
+    padding: "10px",
+    marginBottom: "20px",
+    backgroundColor: "#f2fcf2ff",
+    fontWeight: "500",
+  };
+
+  if (!message) return null;
+
+  return <div style={style}>{message}</div>;
+};
+
+// Display a single anecdote
 const Anecdote = ({ anecdote }) => (
   <div>
     <h2>
@@ -47,6 +58,7 @@ const Anecdote = ({ anecdote }) => (
   </div>
 );
 
+// List all anecdotes
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
@@ -60,6 +72,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 );
 
+// Show information about the app
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
@@ -82,7 +95,10 @@ const About = () => (
   </div>
 );
 
+// Form to create a new anecdote
 const CreateNew = (props) => {
+  const navigate = useNavigate(); // useNavigate hook gives access to the navigate function
+
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
   const [info, setInfo] = useState("");
@@ -95,6 +111,7 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    navigate("/"); // Programmatically navigate to the home page after login
   };
 
   return (
@@ -134,6 +151,7 @@ const CreateNew = (props) => {
   );
 };
 
+// Show footer information
 const Footer = () => (
   <div style={{ marginTop: "20px" }}>
     Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
@@ -146,6 +164,7 @@ const Footer = () => (
 );
 
 const App = () => {
+  // State to hold anecdotes
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -163,15 +182,20 @@ const App = () => {
     },
   ]);
 
+  // State for notification messages
   const [notification, setNotification] = useState("");
 
+  // To add a new anecdote
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
+    showNotification(`A new anecdote "${anecdote.content}" created!`);
   };
 
+  // To find an anecdote by ID
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
+  // To vote for an anecdote
   const vote = (id) => {
     const anecdote = anecdoteById(id);
 
@@ -183,19 +207,34 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
+  // Match the route parameter for anecdote ID
   const match = useMatch("/:id");
   const anecdote = match
     ? anecdotes.find((anecdote) => anecdote.id === Number(match.params.id))
     : null;
 
+  // To show notification messages
+  const showNotification = (message, duration = 5000) => {
+    setNotification(message);
+    setTimeout(() => {
+      setNotification("");
+    }, duration);
+  };
+
   return (
     <div>
       <h1>Software Anecdotes</h1>
       <Menu />
+      <Notification message={notification} />
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/:id" element={<Anecdote anecdote={anecdote} />} />
-        <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        <Route
+          path="/create"
+          element={
+            <CreateNew addNew={addNew} setNotification={setNotification} />
+          }
+        />
         <Route path="/about" element={<About />} />
       </Routes>
       <Footer />
