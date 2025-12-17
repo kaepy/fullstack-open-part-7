@@ -113,6 +113,7 @@ const CreateNew = (props) => {
       info: infoField.value,
       votes: 0,
     });
+
     navigate("/"); // Programmatically navigate to the home page after login
   };
 
@@ -148,6 +149,17 @@ const CreateNew = (props) => {
           />
         </div>
         <button style={{ padding: "5px 10px 5px 10px" }}>Create</button>
+        <button
+          style={{ margin: "0 5px 5px 5px", padding: "5px 10px 5px 10px" }}
+          type="button"
+          onClick={() => {
+            contentField.reset();
+            authorField.reset();
+            infoField.reset();
+          }}
+        >
+          Reset
+        </button>
       </form>
     </div>
   );
