@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate, useMatch } from "react-router-dom";
+import { useField } from "./hooks/useField";
 
 // App navigation menu
 const Menu = () => {
@@ -99,16 +100,17 @@ const About = () => (
 const CreateNew = (props) => {
   const navigate = useNavigate(); // useNavigate hook gives access to the navigate function
 
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  // Custom hook for form fields
+  const contentField = useField("content");
+  const authorField = useField("author");
+  const infoField = useField("info");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: contentField.value,
+      author: authorField.value,
+      info: infoField.value,
       votes: 0,
     });
     navigate("/"); // Programmatically navigate to the home page after login
@@ -123,8 +125,8 @@ const CreateNew = (props) => {
           <input
             style={{ margin: "0 5px 5px 5px" }}
             name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={contentField.value}
+            onChange={contentField.onChange}
           />
         </div>
         <div>
@@ -132,8 +134,8 @@ const CreateNew = (props) => {
           <input
             style={{ margin: "0 5px 5px 5px" }}
             name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={authorField.value}
+            onChange={authorField.onChange}
           />
         </div>
         <div>
@@ -141,8 +143,8 @@ const CreateNew = (props) => {
           <input
             style={{ margin: "0 5px 5px 5px" }}
             name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
+            value={infoField.value}
+            onChange={infoField.onChange}
           />
         </div>
         <button style={{ padding: "5px 10px 5px 10px" }}>Create</button>
